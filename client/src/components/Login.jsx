@@ -1,23 +1,40 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import toast from 'react-hot-toast'
 const Login = () => {
 
+    const navigate=useNavigate();
     const [user,setUser]=useState({
       username:"",
       password:"",
   
     })
 
-    const submitHandler=(e)=>{
+    const submitHandler=async(e)=>{
       e.preventDefault();
       setUser({
       username:"",
       password:"",
       })
       console.log(user)
-    }
 
+      try {
+        const res=await axios.post(`http://localhost:8000/api/v1/user/login`,user,{
+          headers:{
+            "Content-Type":'application/json'
+          },
+          withCredentials:true
+        })
+        if(res.data.success){
+         toast.success(res.data.message);
+        }
+       navigate("/")
+      } catch (error) {
+        toast.error(error.response.data.message)
+        console.log(error)
+      }
+    }
 
   return (
     <div className="min-w-96 mx-auto">
@@ -44,8 +61,6 @@ const Login = () => {
                 <Link to="/signup" className="text-blue-100"> Please Signup</Link>
             </p>
           </div>
-
-
         </form>
       </div>
     </div>

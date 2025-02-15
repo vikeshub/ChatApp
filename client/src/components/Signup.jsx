@@ -1,7 +1,10 @@
+import axios from "axios";
 import React, { useState } from "react";
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
+import toast from 'react-hot-toast'
 const Signup = () => {
 
+  const navigate=useNavigate();
   const [user,setUser]=useState({
     fullname:"",
     username:"",
@@ -10,13 +13,11 @@ const Signup = () => {
     gender:"",
 
   })
-
   const handleCheckBox=(gender)=>{
     setUser({...user,gender})
 
   }
-
-  const submitHandler=(e)=>{
+  const submitHandler=async(e)=>{
     e.preventDefault();
     setUser({
     fullname:"",
@@ -26,6 +27,22 @@ const Signup = () => {
     gender:"",
     })
     console.log(user)
+
+    try {
+      const res=await axios.post(`http://localhost:8000/api/v1/user/register`,user,{
+        headers:{
+          "Content-Type":'application/json'
+        },
+        withCredentials:true
+      })
+      if(res.data.success){
+       toast.success(res.data.message);
+      }
+     navigate("/login")
+    } catch (error) {
+      toast.error(error.response.data.message)
+      console.log(error)
+    }
   }
 
   return (
