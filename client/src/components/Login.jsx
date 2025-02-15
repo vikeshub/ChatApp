@@ -2,9 +2,13 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import {useDispatch} from"react-redux";
+import { setAuthUser } from "../redux/userSlice";
+
 const Login = () => {
 
     const navigate=useNavigate();
+    const dispatch =useDispatch();
     const [user,setUser]=useState({
       username:"",
       password:"",
@@ -29,7 +33,8 @@ const Login = () => {
         if(res.data.success){
          toast.success(res.data.message);
         }
-       navigate("/")
+       navigate("/");
+       dispatch(setAuthUser(res.data));
       } catch (error) {
         toast.error(error.response.data.message)
         console.log(error)
